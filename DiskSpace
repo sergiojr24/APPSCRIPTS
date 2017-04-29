@@ -1,0 +1,31 @@
+#!/bin/bash
+# NOMBRE DEL PROGRAMA: Checar espacio en Disco
+# NOMBRE DE ARCHIVO: check_disk_space.sh
+# AUTOR: Sergio S. Juárez Rivera
+# VERSION 1.0
+# LOGS: /tmp/check_disk_space.log
+#
+# VARIABLES
+hdext1=`df -h -x tmpfs -x devtmpfs --output=target | grep /`
+hdext2="/"
+# FUNCIONES
+function ver_espacio_interno {
+					df -h -x tmpfs -x devtmpfs --output=pcent > /tmp/check_disk_space.log
+					sed -i 's/Uso%//g' /tmp/check_disk_space.log
+					hdspace=`cat /tmp/check_disk_space.log`
+					echo "Haz alcanzado el $hdspace de uso en tu S S D" | iconv -f utf-8 -t iso-8859-1 | festival --tts &
+					notify-send -i /home/sergiojr24/ICONOS/ssd-vs-hdd-sdd-icon-300x267.png "Haz alcanzado el $hdspace de uso en tu SSD"
+					}
+function ver_espacio_total {
+					df -h -x tmpfs -x devtmpfs > /tmp/check_disk_space.log
+					hdspace=`cat /tmp/check_disk_space.log`
+					echo "Sistemas de almacenamiento conectados" | iconv -f utf-8 -t iso-8859-1 | festival --tts &
+					notify-send -i /home/sergiojr24/ICONOS/logo_dis_almacenamiento.png "SISTEMAS DE ALMACENAMIENTO CONECTADOS :" "$hdspace"
+					}
+# PROGRAMA
+if [ $hdext1 == $hdext2 ]; then
+ver_espacio_interno
+else
+ver_espacio_total
+fi
+exit
